@@ -16,7 +16,9 @@ fn main() {
                 let (name, limit_amount) = cli::get_budget_details();
                 db::add_budget(&conn, &name, limit_amount).expect("Failed to add budget");
             }
-            "2" => println!("Viewing Budgets..."), // Next step
+            "2" => {
+                db::get_budgets(&conn).expect("Failed to fetch budgets");
+            }
             "3" => break,
             _ => println!("Invalid option!"),
         }

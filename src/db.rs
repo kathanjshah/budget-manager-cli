@@ -32,3 +32,16 @@ pub fn add_budget(conn: &Connection, name: &str, limit_amount: f64) -> Result<()
     println!("✅ Budget '{}' added with a limit of ${:.2}", name, limit_amount);
     Ok(())
 }
+
+pub fn get_budgets(conn: &Connection) -> Result<()> {
+    let mut stmt = conn.prepare("SELECT id, name, limit_amount FROM budgets")?;
+    let budget_iter = stmt.query_map([], |row| {
+        Ok((row.get::<_, i32>(0)?, row.get::<_, String>(1)?, row.get::<_, f64>(2)?))
+    })?;
+    println!("\nYour Budgets:");
+    for budget in budget_iter {
+        let (id, name, limit) = budget?;
+        println!("[{}] {} - Limit: ${:.2}", id, name, limit);
+    }
+    Ok(())
+}
